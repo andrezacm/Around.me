@@ -12,6 +12,7 @@ import android.view.Menu;
 public class AroundMe extends MapActivity {
 
 	private MapView mapview;
+	private MapController mapcontroller;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -19,7 +20,20 @@ public class AroundMe extends MapActivity {
         setContentView(R.layout.activity_around_me);
         
         mapview = (MapView) findViewById(R.id.mapview);
-        mapview.setBuiltInZoomControls(true);
+        mapcontroller = mapview.getController();
+        
+        String coordinates[] = {"30", "71"};
+        double lat = Double.parseDouble(coordinates[0]);
+        double lng = Double.parseDouble(coordinates[1]);
+
+        GeoPoint point = new GeoPoint(
+        	(int) (lat * 1E6),
+        	(int) (lng * 1E6)
+        );
+
+        mapcontroller.animateTo(point);
+        mapcontroller.setZoom(7);
+        mapview.invalidate();
     }
 
     @Override
