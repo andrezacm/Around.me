@@ -1,5 +1,7 @@
 package around.me;
 
+import java.util.List;
+
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapController;
@@ -69,6 +71,12 @@ public class AroundMe extends MapActivity {
 
 			mapcontroller.animateTo(point);
 			mapcontroller.setZoom(9);
+			
+			MyMapOverlays marker = new MyMapOverlays(point, getResources());
+			List listoverlays = mapview.getOverlays();
+			listoverlays.clear();
+			listoverlays.add(marker);
+			
 			mapview.invalidate();
 		}
 
