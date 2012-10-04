@@ -29,6 +29,7 @@ public class AroundMe extends MapActivity {
 
 		mapview = (MapView) findViewById(R.id.mapview);
 		mapcontroller = mapview.getController();
+		mapview.setBuiltInZoomControls(true);
 
 		location_manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		mylocationlist = new MyLocationListener();
