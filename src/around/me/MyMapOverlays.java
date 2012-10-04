@@ -25,7 +25,7 @@ public class MyMapOverlays extends Overlay{
 		Point screenpoint = new Point();
 		mapview.getProjection().toPixels(location, screenpoint);
 		
-		canvas.drawBitmap(BitmapFactory.decodeResource(this.resources, R.drawable.hand),
+		canvas.drawBitmap(BitmapFactory.decodeResource(this.resources, R.drawable.mylocation),
 				screenpoint.x, screenpoint.y, null);
 	}
 }

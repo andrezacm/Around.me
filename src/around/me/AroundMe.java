@@ -13,6 +13,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.content.Context;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 public class AroundMe extends MapActivity {
@@ -21,7 +22,7 @@ public class AroundMe extends MapActivity {
 	private MapController mapcontroller;
 	private LocationManager location_manager;
 	private MyLocationListener mylocationlist;
-	
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -33,14 +34,42 @@ public class AroundMe extends MapActivity {
 
 		location_manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		mylocationlist = new MyLocationListener();
-		
+
 		location_manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 10, mylocationlist);
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.activity_around_me, menu);
+		getMenuInflater().inflate(R.layout.menu, menu);
 		return true;
+	}
+
+	@SuppressWarnings("deprecation")
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item){
+		switch (item.getItemId()){
+			case R.id.mylocation:
+				Toast.makeText(AroundMe.this, "Current location", Toast.LENGTH_SHORT).show();
+				//mylocationlist.gpsCurrentLocation();	
+				return true;
+
+			case R.id.normalview:
+				Toast.makeText(AroundMe.this, "Normal Street View", Toast.LENGTH_SHORT).show();
+				if(mapview.isSatellite()==true){
+					mapview.setSatellite(false);
+				}
+				return true;
+
+			case R.id.sateliteview:
+				Toast.makeText(AroundMe.this, "Map Satellite View", Toast.LENGTH_SHORT).show();
+				if(mapview.isSatellite()==false){
+					mapview.setSatellite(true);
+				}
+			return true;
+
+			default:
+				return super.onOptionsItemSelected(item);
+		}
 	}
 
 	@Override
@@ -55,29 +84,29 @@ public class AroundMe extends MapActivity {
 		@Override
 		public void onLocationChanged(Location location) {
 			String coordinates[] = {""+location.getLatitude(), ""+location.getLongitude()};
-			
+
 			String text = "My location" +
 					"Latitude: " + coordinates[0] +
 					"Longitude: " + coordinates[1];
 
 			Toast.makeText(getApplicationContext(), text, Toast.LENGTH_SHORT).show();
-						
+
 			double lat = Double.parseDouble(coordinates[0]);
 			double lng = Double.parseDouble(coordinates[1]);
 
 			GeoPoint point = new GeoPoint(
-				(int) (lat * 1E6),
-				(int) (lng * 1E6)
-			);
+					(int) (lat * 1E6),
+					(int) (lng * 1E6)
+					);
 
 			mapcontroller.animateTo(point);
-			mapcontroller.setZoom(9);
-			
+			mapcontroller.setZoom(12);
+
 			MyMapOverlays marker = new MyMapOverlays(point, getResources());
 			List listoverlays = mapview.getOverlays();
 			listoverlays.clear();
 			listoverlays.add(marker);
-			
+
 			mapview.invalidate();
 		}
 
