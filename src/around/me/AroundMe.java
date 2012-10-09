@@ -12,13 +12,18 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.content.Context;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.Toast;
 
 public class AroundMe extends MapActivity {
 
-	private MapView mapview;
+	private MyMapView mapview;
 	private MapController mapcontroller;
 	private LocationManager location_manager;
 	private MyLocationListener mylocationlist;
@@ -28,7 +33,8 @@ public class AroundMe extends MapActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_around_me);
 
-		mapview = (MapView) findViewById(R.id.mapview);
+		mapview = (MyMapView) findViewById(R.id.mapview);
+
 		mapcontroller = mapview.getController();
 		mapview.setBuiltInZoomControls(true);
 
@@ -36,6 +42,17 @@ public class AroundMe extends MapActivity {
 		mylocationlist = new MyLocationListener();
 
 		location_manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 10, mylocationlist);
+		mapview.setLongClickable(true);
+		mapview.setOnLongpressListener(new MyMapView.OnLongpressListener() {
+	        public void onLongpress(final MapView view, final GeoPoint longpressLocation) {
+	        	runOnUiThread(new Runnable() {
+	        		public void run() {
+	        			registerForContextMenu(view);
+	        			openContextMenu(view);
+	        		}
+	        	});
+	        };
+		});
 	}
 
 	@Override
@@ -43,10 +60,44 @@ public class AroundMe extends MapActivity {
 		getMenuInflater().inflate(R.layout.menu, menu);
 		return true;
 	}
+	
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+	    super.onCreateContextMenu(menu, v, menuInfo);
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.layout.menu, menu);
+	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item){
+		switch (item.getItemId()){
+			case R.id.mylocation:
+				Toast.makeText(AroundMe.this, "Current location", Toast.LENGTH_SHORT).show();
+				//mylocationlist.gpsCurrentLocation();	
+				return true;
+
+			case R.id.normalview:
+				Toast.makeText(AroundMe.this, "Normal Street View", Toast.LENGTH_SHORT).show();
+				if(mapview.isSatellite()==true){
+					mapview.setSatellite(false);
+				}
+				return true;
+
+			case R.id.sateliteview:
+				Toast.makeText(AroundMe.this, "Map Satellite View", Toast.LENGTH_SHORT).show();
+				if(mapview.isSatellite()==false){
+					mapview.setSatellite(true);
+				}
+			return true;
+
+			default:
+				return super.onOptionsItemSelected(item);
+		}
+	}
+	
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+	    AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 		switch (item.getItemId()){
 			case R.id.mylocation:
 				Toast.makeText(AroundMe.this, "Current location", Toast.LENGTH_SHORT).show();
@@ -81,7 +132,6 @@ public class AroundMe extends MapActivity {
 
 	public class MyLocationListener implements LocationListener{
 
-		@Override
 		public void onLocationChanged(Location location) {
 			String coordinates[] = {""+location.getLatitude(), ""+location.getLongitude()};
 
@@ -110,17 +160,14 @@ public class AroundMe extends MapActivity {
 			mapview.invalidate();
 		}
 
-		@Override
 		public void onProviderDisabled(String provider) {
 			Toast.makeText(getApplicationContext(), "GPS Disable", Toast.LENGTH_SHORT).show();
 		}
 
-		@Override
 		public void onProviderEnabled(String provider) {
 			Toast.makeText(getApplicationContext(), "GPS Enable", Toast.LENGTH_SHORT).show();
 		}
 
-		@Override
 		public void onStatusChanged(String provider, int status, Bundle extras) {
 			// TODO Auto-generated method stub
 

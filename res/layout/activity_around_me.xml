@@ -4,12 +4,12 @@
     android:layout_height="match_parent" >
 
     
-    <com.google.android.maps.MapView
+    <around.me.MyMapView
         android:id="@+id/mapview"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:clickable="true"
-        android:apiKey="####"
+        android:apiKey="0ztTPDXH8oWoax8kDBDc4F_gaAKFEtO8Kg8Ju3A"
     />
 
 </RelativeLayout>
