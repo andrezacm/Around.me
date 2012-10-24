@@ -12,6 +12,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.content.Context;
+import android.content.Intent;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -89,6 +90,16 @@ public class AroundMe extends MapActivity {
 					mapview.setSatellite(true);
 				}
 			return true;
+			
+			case R.id.viewevent:
+				Intent intent_view = new Intent(this, ViewEvent.class);
+	            startActivity(intent_view);
+	        return true;
+	        
+			case R.id.addevent:
+				Intent intent_add = new Intent(this, AddEvent.class);
+	            startActivity(intent_add);
+	        return true;
 
 			default:
 				return super.onOptionsItemSelected(item);

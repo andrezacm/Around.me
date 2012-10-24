@@ -16,4 +16,12 @@
         android:icon="@drawable/sateliteview"
         android:title="Satelite View"/>
 
+    <item
+        android:id="@+id/addevent"
+        android:title="AddEvent"/>
+
+    <item
+        android:id="@+id/viewevent"
+        android:title="ViewEvent"/>
+    
 </menu>
