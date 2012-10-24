@@ -19,23 +19,29 @@ public final class R {
         public static final int sateliteview=0x7f020005;
     }
     public static final class id {
-        public static final int mapview=0x7f070000;
-        public static final int menu_settings=0x7f070004;
-        public static final int mylocation=0x7f070001;
-        public static final int normalview=0x7f070002;
-        public static final int sateliteview=0x7f070003;
+        public static final int button1=0x7f070002;
+        public static final int editText1=0x7f070000;
+        public static final int editText2=0x7f070001;
+        public static final int mapview=0x7f070003;
+        public static final int menu_settings=0x7f070007;
+        public static final int mylocation=0x7f070004;
+        public static final int normalview=0x7f070005;
+        public static final int sateliteview=0x7f070006;
     }
     public static final class layout {
-        public static final int activity_around_me=0x7f030000;
-        public static final int menu=0x7f030001;
+        public static final int activity_add_event=0x7f030000;
+        public static final int activity_around_me=0x7f030001;
+        public static final int menu=0x7f030002;
     }
     public static final class menu {
-        public static final int activity_around_me=0x7f060000;
+        public static final int activity_add_event=0x7f060000;
+        public static final int activity_around_me=0x7f060001;
     }
     public static final class string {
         public static final int app_name=0x7f040000;
         public static final int hello_world=0x7f040001;
         public static final int menu_settings=0x7f040002;
+        public static final int title_activity_add_event=0x7f040004;
         public static final int title_activity_around_me=0x7f040003;
     }
     public static final class style {
