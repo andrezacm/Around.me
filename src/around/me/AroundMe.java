@@ -11,6 +11,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.view.ContextMenu;
@@ -55,6 +56,29 @@ public class AroundMe extends MapActivity {
 	        };
 		});
 	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
+		
+		Intent intent = getIntent();
+		if (intent.hasExtra("geo_point_x")) {
+			int geo_point_x = (Integer) intent.getExtras().get("geo_point_x");
+			int geo_point_y = (Integer) intent.getExtras().get("geo_point_y");
+			GeoPoint geoPoint = new GeoPoint(geo_point_x, geo_point_y);
+
+			mapcontroller.animateTo(geoPoint);
+			mapcontroller.setZoom(12);
+
+			MyMapOverlays marker = new MyMapOverlays(geoPoint, getResources());
+			List listoverlays = mapview.getOverlays();
+			listoverlays.clear();
+			listoverlays.add(marker);
+
+			Toast.makeText(getApplicationContext(), "" + geo_point_x + " : " + geo_point_y, Toast.LENGTH_LONG).show();
+			mapview.invalidate();
+		}
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -66,7 +90,7 @@ public class AroundMe extends MapActivity {
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 	    super.onCreateContextMenu(menu, v, menuInfo);
 	    MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.layout.menu, menu);
+	    inflater.inflate(R.layout.menu_longpress, menu);
 	}
 
 	@Override
@@ -106,31 +130,22 @@ public class AroundMe extends MapActivity {
 		}
 	}
 	
+	@SuppressLint("NewApi")
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-	    AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 		switch (item.getItemId()){
-			case R.id.mylocation:
-				Toast.makeText(AroundMe.this, "Current location", Toast.LENGTH_SHORT).show();
-				//mylocationlist.gpsCurrentLocation();	
-				return true;
-
-			case R.id.normalview:
-				Toast.makeText(AroundMe.this, "Normal Street View", Toast.LENGTH_SHORT).show();
-				if(mapview.isSatellite()==true){
-					mapview.setSatellite(false);
-				}
-				return true;
-
-			case R.id.sateliteview:
-				Toast.makeText(AroundMe.this, "Map Satellite View", Toast.LENGTH_SHORT).show();
-				if(mapview.isSatellite()==false){
-					mapview.setSatellite(true);
-				}
+		case R.id.longpress_add_event:
+			GeoPoint geoPoint = MyMapView.getLastLocationPressed();
+			
+			Intent intent_add = new Intent(this, AddEvent.class);
+			intent_add.putExtra("geo_point_x", geoPoint.getLatitudeE6());
+			intent_add.putExtra("geo_point_y", geoPoint.getLongitudeE6());
+			startActivity(intent_add);
+			
 			return true;
 
-			default:
-				return super.onOptionsItemSelected(item);
+		default:
+			return super.onOptionsItemSelected(item);
 		}
 	}
 

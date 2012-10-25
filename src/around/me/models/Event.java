@@ -2,9 +2,10 @@ package around.me.models;
 
 import java.util.ArrayList;
 
+import com.google.android.maps.GeoPoint;
+
 public class Event {
-	private int x;
-	private int y;
+	private GeoPoint geoPoint;
 	
 	private String name;
 	private String description;
@@ -13,9 +14,8 @@ public class Event {
 
 	private Event(){};
 	
-	private Event(int x, int y, String name, String description){
-		this.x = x;
-		this.y = y;
+	private Event(String name, String description, GeoPoint geoPoint){
+		this.geoPoint = geoPoint;
 		this.name = name;
 		this.description = description; 
 	}
@@ -25,8 +25,8 @@ public class Event {
 		this.description = description; 
 	}
 	
-	public static void create(String name, String description) {
-		events.add(new Event(name, description));
+	public static void create(String name, String description, GeoPoint geoPoint) {
+		events.add(new Event(name, description, geoPoint));
 	}
 	
 	public static ArrayList<Event> getEvents() {

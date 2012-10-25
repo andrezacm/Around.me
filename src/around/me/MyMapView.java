@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapView;
+import com.google.android.maps.Projection;
 
 public class MyMapView extends MapView {
    public interface OnLongpressListener {
@@ -25,6 +26,7 @@ public class MyMapView extends MapView {
     * has been panned. 
     */
    private GeoPoint lastMapCenter;
+   private static GeoPoint lastLocationPressed;
     
    private Timer longpressTimer = new Timer();
    private MyMapView.OnLongpressListener longpressListener;
@@ -56,6 +58,14 @@ public class MyMapView extends MapView {
         return super.onTouchEvent(event);
     }
  
+    public GeoPoint getLastMapCenter() {
+    	return lastMapCenter;
+    }
+    
+    public static GeoPoint getLastLocationPressed() {
+    	return lastLocationPressed;
+    }
+    
     /**
      * This method takes MotionEvents and decides whether or not
      * a longpress has been detected. This is the meat of the
@@ -79,9 +89,10 @@ public class MyMapView extends MapView {
             longpressTimer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    GeoPoint longpressLocation = getProjection().fromPixels((int)event.getX(), 
-                            (int)event.getY());
+                    GeoPoint longpressLocation = getProjection().fromPixels((int) (event.getXPrecision() * event.getX()), (int) (event.getY() * event.getYPrecision()));
                      
+                    lastLocationPressed = longpressLocation;
+                    
                     /*
                      * Fire the listener. We pass the map location
                      * of the longpress as well, in case it is needed
