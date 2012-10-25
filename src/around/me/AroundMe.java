@@ -21,6 +21,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 public class AroundMe extends MapActivity {
@@ -74,7 +75,7 @@ public class AroundMe extends MapActivity {
 			List listoverlays = mapview.getOverlays();
 			listoverlays.clear();
 			listoverlays.add(marker);
-
+						
 			Toast.makeText(getApplicationContext(), "" + geo_point_x + " : " + geo_point_y, Toast.LENGTH_LONG).show();
 			mapview.invalidate();
 		}

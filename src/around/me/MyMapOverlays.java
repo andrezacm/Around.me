@@ -1,5 +1,6 @@
 package around.me;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -27,5 +28,13 @@ public class MyMapOverlays extends Overlay{
 		
 		canvas.drawBitmap(BitmapFactory.decodeResource(this.resources, R.drawable.mylocation),
 				screenpoint.x, screenpoint.y, null);
+		
+	}
+	
+	@Override
+	public boolean onTouchEvent(android.view.MotionEvent e, MapView mapView){
+		Intent intent_view = new Intent(mapView.getContext(), ViewEvent.class);
+        mapView.getContext().startActivity(intent_view);
+		return true;
 	}
 }
