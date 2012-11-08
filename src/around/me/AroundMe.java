@@ -66,22 +66,35 @@ public class AroundMe extends MapActivity {
 	        };
 		});
 		
-		//Show other points
-		Drawable makerEvent = this.getResources().getDrawable(R.drawable.mylocation);
+		showMyFirstLocation();
+		showEvents();
+	}
+	
+	private void showMyFirstLocation(){
+		Drawable markerMyLocation = this.getResources().getDrawable(R.drawable.hand);
 		
+		MyItemizedOverlay myLocationOverlay = new MyItemizedOverlay(markerMyLocation, getApplicationContext());
+		OverlayItem myLocationItem = new OverlayItem(new GeoPoint(MY_LATITUDE, MY_LONGITUDE), "", "My location");
+		
+		myLocationOverlay.addOverlayItem(myLocationItem);
+		mapview.getOverlays().add(myLocationOverlay);
+		
+		mapcontroller.setCenter(myLocationOverlay.getCenter());
+	}
+
+	private void showEvents(){
+		Drawable makerEvent = this.getResources().getDrawable(R.drawable.mylocation);
+
 		MyItemizedOverlay eventItemOverlay = new MyItemizedOverlay(makerEvent, getApplicationContext());
 		ArrayList<Event> events = getNewEvents();
-		
+
 		for (Event event: events) {
 			GeoPoint pointEvent = new GeoPoint(event.getGeoPoint().getLatitudeE6(), event.getGeoPoint().getLongitudeE6());
 			OverlayItem item = new OverlayItem(pointEvent, event.getName(), event.getDescription());
-			
+
 			eventItemOverlay.addOverlayItem(item);
 			mapview.getOverlays().add(eventItemOverlay);
 		}
-		 
-		mapcontroller.setCenter(eventItemOverlay.getCenter());
-		mapcontroller.zoomToSpan(eventItemOverlay.getLatSpanE6(), eventItemOverlay.getLonSpanE6());
 	}
 	
 	private ArrayList<Event> getNewEvents(){
@@ -97,7 +110,7 @@ public class AroundMe extends MapActivity {
 		
 		Intent intent = getIntent();
 		if (intent.hasExtra("geo_point_x")) {
-			int geo_point_x = (Integer) intent.getExtras().get("geo_point_x");
+			 int geo_point_x = (Integer) intent.getExtras().get("geo_point_x");
 			int geo_point_y = (Integer) intent.getExtras().get("geo_point_y");
 			GeoPoint geoPoint = new GeoPoint(geo_point_x, geo_point_y);
 
