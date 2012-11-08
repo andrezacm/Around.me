@@ -1,5 +1,6 @@
 package around.me;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.google.android.maps.MapActivity;
@@ -25,6 +26,7 @@ import android.view.View;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ImageView;
 import android.widget.Toast;
+import around.me.models.Event;
 
 public class AroundMe extends MapActivity {
 
@@ -32,6 +34,10 @@ public class AroundMe extends MapActivity {
 	private MapController mapcontroller;
 	private LocationManager location_manager;
 	private MyLocationListener mylocationlist;
+	
+	//por enquanto...
+	private static final int MY_LATITUDE = (int) (50.883333 * 1E6);
+	private static final int MY_LONGITUDE = (int) (4.7 * 1E6);
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -42,6 +48,7 @@ public class AroundMe extends MapActivity {
 
 		mapcontroller = mapview.getController();
 		mapview.setBuiltInZoomControls(true);
+		mapcontroller.setZoom(14);
 
 		location_manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		mylocationlist = new MyLocationListener();
@@ -60,19 +67,28 @@ public class AroundMe extends MapActivity {
 		});
 		
 		//Show other points
-		Drawable makerDefault = this.getResources().getDrawable(R.drawable.mylocation);
-		MyItemizedOverlay itemizedOverlay = new MyItemizedOverlay(makerDefault);
-		GeoPoint point = new GeoPoint(33480000, 73000000);
-
-		OverlayItem overlayItem = new OverlayItem(point, "Islamabad", null);
-		itemizedOverlay.addOverlayItem(33695043, 73000000, "Islamabad");
-		itemizedOverlay.addOverlayItem(33480000, 73000000, "Some Other Pakistani City");
-		itemizedOverlay.addOverlayItem(33380000, 73000000, "Some Other Pakistani City");
+		Drawable makerEvent = this.getResources().getDrawable(R.drawable.mylocation);
+		
+		MyItemizedOverlay eventItemOverlay = new MyItemizedOverlay(makerEvent, getApplicationContext());
+		ArrayList<Event> events = getNewEvents();
+		
+		for (Event event: events) {
+			GeoPoint pointEvent = new GeoPoint(event.getGeoPoint().getLatitudeE6(), event.getGeoPoint().getLongitudeE6());
+			OverlayItem item = new OverlayItem(pointEvent, event.getName(), event.getDescription());
+			
+			eventItemOverlay.addOverlayItem(item);
+			mapview.getOverlays().add(eventItemOverlay);
+		}
 		 
-		mapview.getOverlays().add(itemizedOverlay);
+		mapcontroller.setCenter(eventItemOverlay.getCenter());
+		mapcontroller.zoomToSpan(eventItemOverlay.getLatSpanE6(), eventItemOverlay.getLonSpanE6());
+	}
 	
-		mapcontroller.setCenter(new GeoPoint(33580000, 73000000));
-		mapcontroller.zoomToSpan(itemizedOverlay.getLatSpanE6(), itemizedOverlay.getLonSpanE6());
+	private ArrayList<Event> getNewEvents(){
+	    Event.create("Name Party 1", "Description Party1 Party1 Party1 Party1 Party1", new GeoPoint((int) (50.878 * 1E6), (int) (4.7 * 1E6)));
+	    Event.create("Name Party 2", "Description Party2 Party2 Party2 Party2 Party2", new GeoPoint((int) (50.875 * 1E6), (int) (4.705 * 1E6)));
+	    Event.create("Name Party 3", "Description Party3 Party3 Party3 Party3 Party3", new GeoPoint((int) (50.870 * 1E6), (int) (4.710 * 1E6)));
+	    return Event.getEvents();
 	}
 	
 	@Override
@@ -86,7 +102,7 @@ public class AroundMe extends MapActivity {
 			GeoPoint geoPoint = new GeoPoint(geo_point_x, geo_point_y);
 
 			mapcontroller.animateTo(geoPoint);
-			mapcontroller.setZoom(12);
+			mapcontroller.setZoom(14);
 
 			MyMapOverlays marker = new MyMapOverlays(geoPoint, getResources());
 			List listoverlays = mapview.getOverlays();

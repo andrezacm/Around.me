@@ -32,4 +32,29 @@ public class Event {
 	public static ArrayList<Event> getEvents() {
 		return (ArrayList<Event>) events.clone();
 	}
+
+	public GeoPoint getGeoPoint() {
+		return geoPoint;
+	}
+
+	public void setGeoPoint(GeoPoint geoPoint) {
+		this.geoPoint = geoPoint;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	
 }
