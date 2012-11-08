@@ -29,24 +29,23 @@ public class MyMapOverlays extends Overlay{
 		Point screenpoint = new Point();
 		mapview.getProjection().toPixels(location, screenpoint);
 
-		 Bitmap markerImage = BitmapFactory.decodeResource(this.resources, R.drawable.mylocation);
+		 /*Bitmap markerImage = BitmapFactory.decodeResource(this.resources, R.drawable.hand);
 		 
 		    canvas.drawBitmap(markerImage,
 		        screenpoint.x - markerImage.getWidth() / 2,
 		        screenpoint.y - markerImage.getHeight() / 2, null);
-		
-		//canvas.drawBitmap(BitmapFactory.decodeResource(this.resources, R.drawable.mylocation),
-			//	screenpoint.x, screenpoint.y, null);
-
+		*/
+		canvas.drawBitmap(BitmapFactory.decodeResource(this.resources, R.drawable.hand),
+				screenpoint.x, screenpoint.y, null);
 	}
 
 	@Override
 	public boolean onTouchEvent(android.view.MotionEvent e, MapView mapView){
-
+		/*
 		float startX = location.getLatitudeE6();
 		float startY = location.getLongitudeE6();
 		
-		Bitmap markerImage = BitmapFactory.decodeResource(this.resources, R.drawable.mylocation);
+		Bitmap markerImage = BitmapFactory.decodeResource(this.resources, R.drawable.hand);
 
 		@SuppressWarnings("deprecation")
 		Drawable d = new BitmapDrawable(this.resources, markerImage);
@@ -77,5 +76,7 @@ public class MyMapOverlays extends Overlay{
 		} else {
 			return false;
 		}
+		*/
+		return false;
 	}
 }

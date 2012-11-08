@@ -6,6 +6,7 @@ import com.google.android.maps.MapActivity;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
+import com.google.android.maps.OverlayItem;
 
 import android.location.Location;
 import android.location.LocationListener;
@@ -14,6 +15,7 @@ import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -56,6 +58,21 @@ public class AroundMe extends MapActivity {
 	        	});
 	        };
 		});
+		
+		//Show other points
+		Drawable makerDefault = this.getResources().getDrawable(R.drawable.mylocation);
+		MyItemizedOverlay itemizedOverlay = new MyItemizedOverlay(makerDefault);
+		GeoPoint point = new GeoPoint(33480000, 73000000);
+
+		OverlayItem overlayItem = new OverlayItem(point, "Islamabad", null);
+		itemizedOverlay.addOverlayItem(33695043, 73000000, "Islamabad");
+		itemizedOverlay.addOverlayItem(33480000, 73000000, "Some Other Pakistani City");
+		itemizedOverlay.addOverlayItem(33380000, 73000000, "Some Other Pakistani City");
+		 
+		mapview.getOverlays().add(itemizedOverlay);
+	
+		mapcontroller.setCenter(new GeoPoint(33580000, 73000000));
+		mapcontroller.zoomToSpan(itemizedOverlay.getLatSpanE6(), itemizedOverlay.getLonSpanE6());
 	}
 	
 	@Override
@@ -186,7 +203,7 @@ public class AroundMe extends MapActivity {
 
 			mapview.invalidate();
 		}
-
+		
 		public void onProviderDisabled(String provider) {
 			Toast.makeText(getApplicationContext(), "GPS Disable", Toast.LENGTH_SHORT).show();
 		}
