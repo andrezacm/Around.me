@@ -108,23 +108,7 @@ public class AroundMe extends MapActivity {
 	public void onStart() {
 		super.onStart();
 		
-		Intent intent = getIntent();
-		if (intent.hasExtra("geo_point_x")) {
-			 int geo_point_x = (Integer) intent.getExtras().get("geo_point_x");
-			int geo_point_y = (Integer) intent.getExtras().get("geo_point_y");
-			GeoPoint geoPoint = new GeoPoint(geo_point_x, geo_point_y);
-
-			mapcontroller.animateTo(geoPoint);
-			mapcontroller.setZoom(14);
-
-			MyMapOverlays marker = new MyMapOverlays(geoPoint, getResources());
-			List listoverlays = mapview.getOverlays();
-			listoverlays.clear();
-			listoverlays.add(marker);
-						
-			Toast.makeText(getApplicationContext(), "" + geo_point_x + " : " + geo_point_y, Toast.LENGTH_LONG).show();
-			mapview.invalidate();
-		}
+		showEvents();
 	}
 
 	@Override
@@ -223,7 +207,7 @@ public class AroundMe extends MapActivity {
 					);
 
 			mapcontroller.animateTo(point);
-			mapcontroller.setZoom(12);
+			mapcontroller.setZoom(14);
 
 			MyMapOverlays marker = new MyMapOverlays(point, getResources());
 			List listoverlays = mapview.getOverlays();
