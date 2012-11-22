@@ -53,7 +53,7 @@ public class AroundMeLogin extends Activity {
     }
     
     private void authenticate(){
-    	AsyncTask<Void, Void, Void> a = new AsyncTask<Void, Void, Void>() {
+    	AsyncTask<Void, Void, Void> auth = new AsyncTask<Void, Void, Void>() {
 			@Override
 			protected Void doInBackground(Void... params) {
 				EditText mEmailField = (EditText) findViewById(R.id.login_email);
@@ -113,7 +113,7 @@ public class AroundMeLogin extends Activity {
 				return null;
 			}
     	};
-    	a.execute();
+    	auth.execute();
 	}
     
     public String parseToken(String jsonResponse) throws Exception {
