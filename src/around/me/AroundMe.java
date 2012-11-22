@@ -1,7 +1,19 @@
 package around.me;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.GeoPoint;
@@ -12,11 +24,15 @@ import com.google.android.maps.OverlayItem;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -24,6 +40,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 import around.me.models.Event;
@@ -34,6 +51,8 @@ public class AroundMe extends MapActivity {
 	private MapController mapcontroller;
 	private LocationManager location_manager;
 	private MyLocationListener mylocationlist;
+	
+	private boolean isAuthenticated = false;
 	
 	//por enquanto...
 	private static final int MY_LATITUDE = (int) (50.883333 * 1E6);
@@ -68,6 +87,16 @@ public class AroundMe extends MapActivity {
 		
 		showMyFirstLocation();
 		showEvents();
+		
+		if (!isNotUser()){
+			try {
+				isAuthenticated = isAuthenticated().booleanValue();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	private void showMyFirstLocation(){
@@ -114,7 +143,12 @@ public class AroundMe extends MapActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.layout.menu, menu);
-		return true;
+		//if(isNotUser()){
+	    	menu.add(0, 98, 0, "Registre-se");
+	    //} else if(!isAuthenticated){
+	    	menu.add(0, 99, 0, "Login");
+		//}
+		return super.onCreateOptionsMenu(menu);
 	}
 	
 	@Override
@@ -145,18 +179,13 @@ public class AroundMe extends MapActivity {
 					mapview.setSatellite(true);
 				}
 			return true;
-			
-			case R.id.viewevent:
-				Intent intent_view = new Intent(this, ViewEvent.class);
-	            startActivity(intent_view);
-	        return true;
-	        
-			case R.id.register:
+				        
+			case 98:
 				Intent intent_register = new Intent(this, Register.class);
 	            startActivity(intent_register);
 	        return true;
 
-			case R.id.login:
+			case 99:
 				Intent intent_login = new Intent(this, AroundMeLogin.class);
 	            startActivity(intent_login);
 	        return true;
@@ -185,6 +214,82 @@ public class AroundMe extends MapActivity {
 		}
 	}
 
+	private Boolean isAuthenticated() throws InterruptedException, ExecutionException{
+    	AsyncTask<Void, Void, Boolean> auth = new AsyncTask<Void, Void, Boolean>() {
+
+			@Override
+			protected Boolean doInBackground(Void... params) {
+				// Restore preferences
+				SharedPreferences settings = getPreferences(Activity.MODE_PRIVATE);
+				String token = settings.getString("token", "");
+				
+		        Log.e("Authentication JSON", "TOKEN = "+ token);
+		        
+				DefaultHttpClient client = new DefaultHttpClient();
+	    		HttpPost post = new HttpPost("http://sleepy-castle-9664.herokuapp.com/sessions");
+	    	    
+	    		JSONObject holder = new JSONObject();
+	    	    JSONObject userObj = new JSONObject();  
+	    	    
+	    	    try {
+	    	    	userObj.put("token", token);
+	    		    holder.put("user", userObj);
+	    		    Log.e("Authentication JSON", "Authentication JSON = "+ holder.toString());
+	    	    	StringEntity se = new StringEntity(holder.toString());
+	    	    	post.setEntity(se);
+	    	    	post.setHeader("Accept", "application/json");
+	    	    	post.setHeader("Content-Type","application/json");
+	    	    } catch (UnsupportedEncodingException e) {
+	    	    	Log.e("Error",""+e);
+	    	        e.printStackTrace();
+	    	    } catch (JSONException js) {
+	    	    	js.printStackTrace();
+	    	    }
+
+	    	    String response = null;
+	    	    try {
+	    	    	ResponseHandler<String> responseHandler = new BasicResponseHandler();
+	    	        response = client.execute(post, responseHandler);
+	    	        Log.i("AUTHENTICATION", "Received "+ response +"!");
+	    	    } catch (ClientProtocolException e) {
+	    	        e.printStackTrace();
+	    	        Log.e("ClientProtocol",""+e);
+	    	    } catch (IOException e) {
+	    	        e.printStackTrace();
+	    	        Log.e("IO",""+e);
+	    	    }
+	    	    try {
+	    	    	JSONObject jObject = new JSONObject(response);
+	    			JSONObject sessionObject = jObject.getJSONObject("session");
+	    	    	String attributeError = sessionObject.getString("error");
+	    	    	
+	    	    	if (attributeError.equals("Success"))
+	    	    		return new Boolean(true);
+	    	    	else
+	    	    		return new Boolean(false);
+	    	    	
+	    		} catch (Exception e) {
+	    			e.printStackTrace();
+	    		}
+	    	    return null;
+			}
+    	};				
+    	return auth.execute().get();
+	}
+	
+	private boolean isNotUser(){
+		// Restore preferences
+		SharedPreferences settings = getPreferences(Activity.MODE_PRIVATE);
+		String email = settings.getString("email", "");
+		String token = settings.getString("token", "");
+		
+		if(email == "" || token == ""){
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	@Override
 	protected boolean isRouteDisplayed() {
 		// TODO Auto-generated method stub

@@ -27,7 +27,7 @@ public class Register extends Activity {
 
 				User user = new User(name.getText().toString(), email.getText().toString(), password.getText().toString());
 				user.setDatabase(getBaseContext());
-				user.insert();
+				//user.insert();
 				
 				Intent intent_map = new Intent(v.getContext(), AroundMe.class);
 				startActivity(intent_map);
