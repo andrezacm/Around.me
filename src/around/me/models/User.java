@@ -125,7 +125,7 @@ public class User {
 				try {
 					ResponseHandler<String> responseHandler = new BasicResponseHandler();
 					response = client.execute(post, responseHandler);
-					Log.i("AUTHENTICATION", "Received "+ response +"!");
+					Log.i("Register user", "Received "+ response +"!");
 				} catch (ClientProtocolException e) {
 					e.printStackTrace();
 					Log.e("ClientProtocol",""+e);
@@ -133,27 +133,9 @@ public class User {
 					e.printStackTrace();
 					Log.e("IO",""+e);
 				}
-				try {
-					String mAuthToken = parseToken(response);
-
-					/*SharedPreferences settings = getPreferences(Activity.MODE_PRIVATE);
-					SharedPreferences.Editor editor = settings.edit();
-					editor.putString("email", email);
-					editor.putString("token", mAuthToken);
-					editor.commit();*/
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
 				return null;
 			}
 		};
 		auth.execute();
-	}
-	
-	public String parseToken(String jsonResponse) throws Exception {
-		JSONObject jObject = new JSONObject(jsonResponse);
-		JSONObject sessionObject = jObject.getJSONObject("session");
-		String attributeToken = sessionObject.getString("auth_token");
-		return attributeToken;
 	}
 }

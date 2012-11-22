@@ -3,6 +3,7 @@ package around.me;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -27,7 +28,12 @@ public class Register extends Activity {
 
 				User user = new User(name.getText().toString(), email.getText().toString(), password.getText().toString());
 				user.setDatabase(getBaseContext());
-				//user.insert();
+				user.insert();
+				
+				SharedPreferences settings = getPreferences(Activity.MODE_PRIVATE);
+				SharedPreferences.Editor editor = settings.edit();
+				editor.putString("email", email.getText().toString());
+				editor.commit();
 				
 				Intent intent_map = new Intent(v.getContext(), AroundMe.class);
 				startActivity(intent_map);

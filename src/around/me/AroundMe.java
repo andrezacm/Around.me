@@ -51,9 +51,7 @@ public class AroundMe extends MapActivity {
 	private MapController mapcontroller;
 	private LocationManager location_manager;
 	private MyLocationListener mylocationlist;
-	
-	private boolean isAuthenticated = false;
-	
+
 	//por enquanto...
 	private static final int MY_LATITUDE = (int) (50.883333 * 1E6);
 	private static final int MY_LONGITUDE = (int) (4.7 * 1E6);
@@ -75,39 +73,29 @@ public class AroundMe extends MapActivity {
 		location_manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 10, mylocationlist);
 		mapview.setLongClickable(true);
 		mapview.setOnLongpressListener(new MyMapView.OnLongpressListener() {
-	        public void onLongpress(final MapView view, final GeoPoint longpressLocation) {
-	        	runOnUiThread(new Runnable() {
-	        		public void run() {
-	        			registerForContextMenu(view);
-	        			openContextMenu(view);
-	        		}
-	        	});
-	        };
+			public void onLongpress(final MapView view, final GeoPoint longpressLocation) {
+				runOnUiThread(new Runnable() {
+					public void run() {
+						registerForContextMenu(view);
+						openContextMenu(view);
+					}
+				});
+			};
 		});
-		
+
 		showMyFirstLocation();
 		showEvents();
-		
-		if (!isNotUser()){
-			try {
-				isAuthenticated = isAuthenticated().booleanValue();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			} catch (ExecutionException e) {
-				e.printStackTrace();
-			}
-		}
 	}
-	
+
 	private void showMyFirstLocation(){
 		Drawable markerMyLocation = this.getResources().getDrawable(R.drawable.hand);
-		
+
 		MyItemizedOverlay myLocationOverlay = new MyItemizedOverlay(markerMyLocation, getApplicationContext());
 		OverlayItem myLocationItem = new OverlayItem(new GeoPoint(MY_LATITUDE, MY_LONGITUDE), "", "My location");
-		
+
 		myLocationOverlay.addOverlayItem(myLocationItem);
 		mapview.getOverlays().add(myLocationOverlay);
-		
+
 		mapcontroller.setCenter(myLocationOverlay.getCenter());
 	}
 
@@ -125,88 +113,85 @@ public class AroundMe extends MapActivity {
 			mapview.getOverlays().add(eventItemOverlay);
 		}
 	}
-	
+
 	private ArrayList<Event> getNewEvents(){
-	    Event.create("Name Party 1", "Description Party1 Party1 Party1 Party1 Party1", new GeoPoint((int) (50.878 * 1E6), (int) (4.7 * 1E6)));
-	    Event.create("Name Party 2", "Description Party2 Party2 Party2 Party2 Party2", new GeoPoint((int) (50.875 * 1E6), (int) (4.705 * 1E6)));
-	    Event.create("Name Party 3", "Description Party3 Party3 Party3 Party3 Party3", new GeoPoint((int) (50.870 * 1E6), (int) (4.710 * 1E6)));
-	    return Event.getEvents();
+		Event.create("Name Party 1", "Description Party1 Party1 Party1 Party1 Party1", new GeoPoint((int) (50.878 * 1E6), (int) (4.7 * 1E6)));
+		Event.create("Name Party 2", "Description Party2 Party2 Party2 Party2 Party2", new GeoPoint((int) (50.875 * 1E6), (int) (4.705 * 1E6)));
+		Event.create("Name Party 3", "Description Party3 Party3 Party3 Party3 Party3", new GeoPoint((int) (50.870 * 1E6), (int) (4.710 * 1E6)));
+		return Event.getEvents();
 	}
-	
+
 	@Override
 	public void onStart() {
 		super.onStart();
-		
+
 		showEvents();
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.layout.menu, menu);
-		//if(isNotUser()){
-	    	menu.add(0, 98, 0, "Registre-se");
-	    //} else if(!isAuthenticated){
-	    	menu.add(0, 99, 0, "Login");
-		//}
+		menu.add(0, 98, 0, "Registre-se");
+		menu.add(0, 99, 0, "Login");
 		return super.onCreateOptionsMenu(menu);
 	}
-	
+
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-	    super.onCreateContextMenu(menu, v, menuInfo);
-	    MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.layout.menu_longpress, menu);
+		super.onCreateContextMenu(menu, v, menuInfo);
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.layout.menu_longpress, menu);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item){
 		switch (item.getItemId()){
-			case R.id.mylocation:
-				Toast.makeText(AroundMe.this, "Current location", Toast.LENGTH_SHORT).show();
-				//mylocationlist.gpsCurrentLocation();	
-				return true;
-
-			case R.id.normalview:
-				Toast.makeText(AroundMe.this, "Normal Street View", Toast.LENGTH_SHORT).show();
-				if(mapview.isSatellite()==true){
-					mapview.setSatellite(false);
-				}
-				return true;
-
-			case R.id.sateliteview:
-				Toast.makeText(AroundMe.this, "Map Satellite View", Toast.LENGTH_SHORT).show();
-				if(mapview.isSatellite()==false){
-					mapview.setSatellite(true);
-				}
+		case R.id.mylocation:
+			Toast.makeText(AroundMe.this, "Current location", Toast.LENGTH_SHORT).show();
+			//mylocationlist.gpsCurrentLocation();	
 			return true;
-				        
-			case 98:
-				Intent intent_register = new Intent(this, Register.class);
-	            startActivity(intent_register);
-	        return true;
 
-			case 99:
-				Intent intent_login = new Intent(this, AroundMeLogin.class);
-	            startActivity(intent_login);
-	        return true;
-	        
-			default:
-				return super.onOptionsItemSelected(item);
+		case R.id.normalview:
+			Toast.makeText(AroundMe.this, "Normal Street View", Toast.LENGTH_SHORT).show();
+			if(mapview.isSatellite()==true){
+				mapview.setSatellite(false);
+			}
+			return true;
+
+		case R.id.sateliteview:
+			Toast.makeText(AroundMe.this, "Map Satellite View", Toast.LENGTH_SHORT).show();
+			if(mapview.isSatellite()==false){
+				mapview.setSatellite(true);
+			}
+			return true;
+
+		case 98:
+			Intent intent_register = new Intent(this, Register.class);
+			startActivity(intent_register);
+			return true;
+
+		case 99:
+			Intent intent_login = new Intent(this, AroundMeLogin.class);
+			startActivity(intent_login);
+			return true;
+
+		default:
+			return super.onOptionsItemSelected(item);
 		}
 	}
-	
+
 	@SuppressLint("NewApi")
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 		switch (item.getItemId()){
 		case R.id.longpress_add_event:
 			GeoPoint geoPoint = MyMapView.getLastLocationPressed();
-			
+
 			Intent intent_add = new Intent(this, AddEvent.class);
 			intent_add.putExtra("geo_point_x", geoPoint.getLatitudeE6());
 			intent_add.putExtra("geo_point_y", geoPoint.getLongitudeE6());
 			startActivity(intent_add);
-			
+
 			return true;
 
 		default:
@@ -215,81 +200,125 @@ public class AroundMe extends MapActivity {
 	}
 
 	private Boolean isAuthenticated() throws InterruptedException, ExecutionException{
-    	AsyncTask<Void, Void, Boolean> auth = new AsyncTask<Void, Void, Boolean>() {
+		AsyncTask<Void, Void, Boolean> auth = new AsyncTask<Void, Void, Boolean>() {
 
 			@Override
 			protected Boolean doInBackground(Void... params) {
 				// Restore preferences
 				SharedPreferences settings = getPreferences(Activity.MODE_PRIVATE);
 				String token = settings.getString("token", "");
-				
-		        Log.e("Authentication JSON", "TOKEN = "+ token);
-		        
-				DefaultHttpClient client = new DefaultHttpClient();
-	    		HttpPost post = new HttpPost("http://sleepy-castle-9664.herokuapp.com/sessions");
-	    	    
-	    		JSONObject holder = new JSONObject();
-	    	    JSONObject userObj = new JSONObject();  
-	    	    
-	    	    try {
-	    	    	userObj.put("token", token);
-	    		    holder.put("user", userObj);
-	    		    Log.e("Authentication JSON", "Authentication JSON = "+ holder.toString());
-	    	    	StringEntity se = new StringEntity(holder.toString());
-	    	    	post.setEntity(se);
-	    	    	post.setHeader("Accept", "application/json");
-	    	    	post.setHeader("Content-Type","application/json");
-	    	    } catch (UnsupportedEncodingException e) {
-	    	    	Log.e("Error",""+e);
-	    	        e.printStackTrace();
-	    	    } catch (JSONException js) {
-	    	    	js.printStackTrace();
-	    	    }
 
-	    	    String response = null;
-	    	    try {
-	    	    	ResponseHandler<String> responseHandler = new BasicResponseHandler();
-	    	        response = client.execute(post, responseHandler);
-	    	        Log.i("AUTHENTICATION", "Received "+ response +"!");
-	    	    } catch (ClientProtocolException e) {
-	    	        e.printStackTrace();
-	    	        Log.e("ClientProtocol",""+e);
-	    	    } catch (IOException e) {
-	    	        e.printStackTrace();
-	    	        Log.e("IO",""+e);
-	    	    }
-	    	    try {
-	    	    	JSONObject jObject = new JSONObject(response);
-	    			JSONObject sessionObject = jObject.getJSONObject("session");
-	    	    	String attributeError = sessionObject.getString("error");
-	    	    	
-	    	    	if (attributeError.equals("Success"))
-	    	    		return new Boolean(true);
-	    	    	else
-	    	    		return new Boolean(false);
-	    	    	
-	    		} catch (Exception e) {
-	    			e.printStackTrace();
-	    		}
-	    	    return null;
+				Log.e("Authentication JSON", "TOKEN = "+ token);
+
+				DefaultHttpClient client = new DefaultHttpClient();
+				HttpPost post = new HttpPost("http://sleepy-castle-9664.herokuapp.com/sessions?auth_token=" + token);
+
+				post.setHeader("Accept", "application/json");
+				post.setHeader("Content-Type","application/json");
+
+				String response = null;
+				try {
+					ResponseHandler<String> responseHandler = new BasicResponseHandler();
+					response = client.execute(post, responseHandler);
+					Log.i("AUTHENTICATION", "Received "+ response +"!");
+				} catch (ClientProtocolException e) {
+					e.printStackTrace();
+					Log.e("ClientProtocol",""+e);
+				} catch (IOException e) {
+					e.printStackTrace();
+					Log.e("IO",""+e);
+				}
+				try {
+					JSONObject jObject = new JSONObject(response);
+					JSONObject sessionObject = jObject.getJSONObject("session");
+					String attributeError = sessionObject.getString("error");
+
+					if (attributeError.equals("Success"))
+						return new Boolean(true);
+					else
+						return new Boolean(false);
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				return null;
 			}
-    	};				
-    	return auth.execute().get();
+		};				
+		return auth.execute().get();
 	}
-	
+
+	private void sendToServer(String token){
+
+		AsyncTask<Event, Void, Void> newEvent = new AsyncTask<Event, Void, Void>() {
+			@Override
+			protected Void doInBackground(Event... params) {
+				Event[] param = (Event[]) params;
+				Log.e("New Event JSON", "NAME = "+ param[0].getName());
+				Log.e("New Event JSON", "DESCRIPTION = "+ param[0].getDescription());
+				Log.e("New Event JSON", "DATE = "+ param[0].getDate());
+
+				SharedPreferences settings = getPreferences(Activity.MODE_PRIVATE);
+				String token = settings.getString("token", "");
+
+				DefaultHttpClient client = new DefaultHttpClient();
+				HttpPost post = new HttpPost("http://sleepy-castle-9664.herokuapp.com/events?auth_token=" + token);
+
+				JSONObject holder = new JSONObject();
+				JSONObject userObj = new JSONObject();  
+
+				try {
+					userObj.put("name", param[0].getName());
+					userObj.put("description", param[0].getDescription());
+					userObj.put("date", param[0].getDate());
+					userObj.put("coordenada x", param[0].getGeoPoint().getLatitudeE6());
+					userObj.put("coordenada y", param[0].getGeoPoint().getLongitudeE6());
+
+					holder.put("event", userObj);
+					Log.e("Event JSON", "Event JSON = "+ holder.toString());
+					StringEntity se = new StringEntity(holder.toString());
+					post.setEntity(se);
+					post.setHeader("Accept", "application/json");
+					post.setHeader("Content-Type","application/json");
+				} catch (UnsupportedEncodingException e) {
+					Log.e("Error",""+e);
+					e.printStackTrace();
+				} catch (JSONException js) {
+					js.printStackTrace();
+				}
+
+				String response = null;
+				try {
+					ResponseHandler<String> responseHandler = new BasicResponseHandler();
+					response = client.execute(post, responseHandler);
+					Log.i("New Event", "Received "+ response +"!");
+				} catch (ClientProtocolException e) {
+					e.printStackTrace();
+					Log.e("ClientProtocol",""+e);
+				} catch (IOException e) {
+					e.printStackTrace();
+					Log.e("IO",""+e);
+				}
+				return null;
+			}
+		};
+
+		for (Event event : Event.getEvents()) {
+			newEvent.execute(event);
+		}
+	}
+
 	private boolean isNotUser(){
 		// Restore preferences
 		SharedPreferences settings = getPreferences(Activity.MODE_PRIVATE);
 		String email = settings.getString("email", "");
-		String token = settings.getString("token", "");
-		
-		if(email == "" || token == ""){
+
+		if(email == ""){
 			return true;
 		} else {
 			return false;
 		}
 	}
-	
+
 	@Override
 	protected boolean isRouteDisplayed() {
 		// TODO Auto-generated method stub
@@ -326,7 +355,7 @@ public class AroundMe extends MapActivity {
 
 			mapview.invalidate();
 		}
-		
+
 		public void onProviderDisabled(String provider) {
 			Toast.makeText(getApplicationContext(), "GPS Disable", Toast.LENGTH_SHORT).show();
 		}

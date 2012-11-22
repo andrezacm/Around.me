@@ -101,10 +101,9 @@ public class AroundMeLogin extends Activity {
 	    	    }
 	    	    try {
 	    	    	mAuthToken = parseToken(response);
-	    	    	
+
 	    	    	SharedPreferences settings = getPreferences(Activity.MODE_PRIVATE);
 	    	    	SharedPreferences.Editor editor = settings.edit();
-	    	    	editor.putString("email", email);
 	    	    	editor.putString("token", mAuthToken);
 	    	    	editor.commit();
 	    		} catch (Exception e) {
