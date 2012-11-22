@@ -12,6 +12,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
@@ -22,7 +23,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-import around.me.models.User;
 
 public class AroundMeLogin extends Activity {
 
@@ -53,60 +53,67 @@ public class AroundMeLogin extends Activity {
     }
     
     private void authenticate(){
-		EditText mEmailField = (EditText) findViewById(R.id.login_email);
-        EditText mPasswordField = (EditText) findViewById(R.id.login_password);
-        
-        String email = mEmailField.getText().toString();
-        String password = mPasswordField.getText().toString();
-        
-        Log.e("Authentication JSON", "EMAIL = "+ email);
-        Log.e("Authentication JSON", "PASSWORD = "+ password);
-        
-		DefaultHttpClient client = new DefaultHttpClient();
-		HttpPost post = new HttpPost("http://sleepy-castle-9664.herokuapp.com/sessions");
-	    
-		JSONObject holder = new JSONObject();
-	    JSONObject userObj = new JSONObject();  
-	    
-	    try {
-	    	userObj.put("password", password);
-	    	userObj.put("email", email);   
-		    holder.put("user", userObj);
-		    Log.e("Authentication JSON", "Authentication JSON = "+ holder.toString());
-	    	StringEntity se = new StringEntity(holder.toString());
-	    	post.setEntity(se);
-	    	post.setHeader("Accept", "application/json");
-	    	post.setHeader("Content-Type","application/json");
-	    } catch (UnsupportedEncodingException e) {
-	    	Log.e("Error",""+e);
-	        e.printStackTrace();
-	    } catch (JSONException js) {
-	    	js.printStackTrace();
-	    }
+    	AsyncTask<Void, Void, Void> a = new AsyncTask<Void, Void, Void>() {
+			@Override
+			protected Void doInBackground(Void... params) {
+				EditText mEmailField = (EditText) findViewById(R.id.login_email);
+		        EditText mPasswordField = (EditText) findViewById(R.id.login_password);
+		        
+		        String email = mEmailField.getText().toString();
+		        String password = mPasswordField.getText().toString();
+		        
+		        Log.e("Authentication JSON", "EMAIL = "+ email);
+		        Log.e("Authentication JSON", "PASSWORD = "+ password);
+		        
+				DefaultHttpClient client = new DefaultHttpClient();
+	    		HttpPost post = new HttpPost("http://sleepy-castle-9664.herokuapp.com/sessions");
+	    	    
+	    		JSONObject holder = new JSONObject();
+	    	    JSONObject userObj = new JSONObject();  
+	    	    
+	    	    try {
+	    	    	userObj.put("password", password);
+	    	    	userObj.put("email", email);   
+	    		    holder.put("user", userObj);
+	    		    Log.e("Authentication JSON", "Authentication JSON = "+ holder.toString());
+	    	    	StringEntity se = new StringEntity(holder.toString());
+	    	    	post.setEntity(se);
+	    	    	post.setHeader("Accept", "application/json");
+	    	    	post.setHeader("Content-Type","application/json");
+	    	    } catch (UnsupportedEncodingException e) {
+	    	    	Log.e("Error",""+e);
+	    	        e.printStackTrace();
+	    	    } catch (JSONException js) {
+	    	    	js.printStackTrace();
+	    	    }
 
-	    String response = null;
-	    try {
-	    	ResponseHandler<String> responseHandler = new BasicResponseHandler();
-	        response = client.execute(post, responseHandler);
-	        Log.i("AUTHENTICATION", "Received "+ response +"!");
-	    } catch (ClientProtocolException e) {
-	        e.printStackTrace();
-	        Log.e("ClientProtocol",""+e);
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	        Log.e("IO",""+e);
-	    }
-	    try {
-	    	mAuthToken = parseToken(response);
-	    	
-	    	SharedPreferences settings = getPreferences(Activity.MODE_PRIVATE);
-	    	SharedPreferences.Editor editor = settings.edit();
-	    	editor.putString("email", email);
-	    	editor.putString("token", mAuthToken);
-	    	editor.commit();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	    	    String response = null;
+	    	    try {
+	    	    	ResponseHandler<String> responseHandler = new BasicResponseHandler();
+	    	        response = client.execute(post, responseHandler);
+	    	        Log.i("AUTHENTICATION", "Received "+ response +"!");
+	    	    } catch (ClientProtocolException e) {
+	    	        e.printStackTrace();
+	    	        Log.e("ClientProtocol",""+e);
+	    	    } catch (IOException e) {
+	    	        e.printStackTrace();
+	    	        Log.e("IO",""+e);
+	    	    }
+	    	    try {
+	    	    	mAuthToken = parseToken(response);
+	    	    	
+	    	    	SharedPreferences settings = getPreferences(Activity.MODE_PRIVATE);
+	    	    	SharedPreferences.Editor editor = settings.edit();
+	    	    	editor.putString("email", email);
+	    	    	editor.putString("token", mAuthToken);
+	    	    	editor.commit();
+	    		} catch (Exception e) {
+	    			e.printStackTrace();
+	    		}
+				return null;
+			}
+    	};
+    	a.execute();
 	}
     
     public String parseToken(String jsonResponse) throws Exception {
