@@ -156,6 +156,11 @@ public class AroundMe extends MapActivity {
 	            startActivity(intent_register);
 	        return true;
 
+			case R.id.login:
+				Intent intent_login = new Intent(this, AroundMeLogin.class);
+	            startActivity(intent_login);
+	        return true;
+	        
 			default:
 				return super.onOptionsItemSelected(item);
 		}
