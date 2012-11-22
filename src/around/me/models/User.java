@@ -18,6 +18,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.EditText;
+import android.widget.Toast;
 import around.me.R;
 import around.me.dao.DataBaseHelper;
 
@@ -88,7 +89,7 @@ public class User {
 		database = new DataBaseHelper(context);
 	}
 
-	/*public void insert(){
+	public void insert(){
 		AsyncTask<Void, Void, Void> auth = new AsyncTask<Void, Void, Void>() {
 			@Override
 			protected Void doInBackground(Void... params) {
@@ -103,7 +104,9 @@ public class User {
 				JSONObject userObj = new JSONObject();  
 
 				try {
+					userObj.put("name", name);
 					userObj.put("password", password);
+					userObj.put("password_confirmation", password);
 					userObj.put("email", email);   
 					holder.put("user", userObj);
 					Log.e("Authentication JSON", "Authentication JSON = "+ holder.toString());
@@ -131,13 +134,13 @@ public class User {
 					Log.e("IO",""+e);
 				}
 				try {
-					mAuthToken = parseToken(response);
+					String mAuthToken = parseToken(response);
 
-					SharedPreferences settings = getPreferences(Activity.MODE_PRIVATE);
+					/*SharedPreferences settings = getPreferences(Activity.MODE_PRIVATE);
 					SharedPreferences.Editor editor = settings.edit();
 					editor.putString("email", email);
 					editor.putString("token", mAuthToken);
-					editor.commit();
+					editor.commit();*/
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -145,5 +148,12 @@ public class User {
 			}
 		};
 		auth.execute();
-	}*/
+	}
+	
+	public String parseToken(String jsonResponse) throws Exception {
+		JSONObject jObject = new JSONObject(jsonResponse);
+		JSONObject sessionObject = jObject.getJSONObject("session");
+		String attributeToken = sessionObject.getString("auth_token");
+		return attributeToken;
+	}
 }
