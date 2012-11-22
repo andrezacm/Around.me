@@ -2,6 +2,9 @@ package around.me.models;
 
 import java.util.ArrayList;
 
+import android.content.Context;
+import around.me.dao.DataBaseHelper;
+
 import com.google.android.maps.GeoPoint;
 
 public class Event {
@@ -9,10 +12,29 @@ public class Event {
 	
 	private String name;
 	private String description;
+	private String date;
+	private long id;
+
+	private DataBaseHelper database;
 	
 	private static ArrayList<Event> events = new ArrayList<Event>();
 
 	private Event(){};
+		
+	private Event(long id, String name, String description, String date, GeoPoint geoPoint){
+		this.geoPoint = geoPoint;
+		this.name = name;
+		this.description = description;
+		this.date = date;
+		this.id = id;
+	}
+	
+	private Event(String name, String description, String date, GeoPoint geoPoint){
+		this.geoPoint = geoPoint;
+		this.name = name;
+		this.description = description; 
+		this.date = date;
+	}
 	
 	private Event(String name, String description, GeoPoint geoPoint){
 		this.geoPoint = geoPoint;
@@ -40,6 +62,11 @@ public class Event {
 	public void setGeoPoint(GeoPoint geoPoint) {
 		this.geoPoint = geoPoint;
 	}
+	
+	public void setGeoPoint(int latitude, int longitude) {
+		GeoPoint geoPoint = new GeoPoint(latitude, longitude);
+		this.geoPoint = geoPoint;
+	}
 
 	public String getName() {
 		return name;
@@ -56,5 +83,36 @@ public class Event {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
+	public String getDate() {
+		return date;
+	}
+
+	public void setDate(String date) {
+		this.date = date;
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
 	
+	public String[] getParams(){
+		String[] params = new String[] {
+				String.valueOf(this.id), this.name, this.description, this.date,
+				String.valueOf(this.geoPoint.getLatitudeE6()), String.valueOf(this.geoPoint.getLongitudeE6())};
+		
+		return params;
+	}
+	
+	public void setDatabase(Context context){
+		database = new DataBaseHelper(context);
+	}
+	
+	public void insert(){
+		database.insertData(DataBaseHelper.TABLE_EVENT, getParams());
+	}
 }

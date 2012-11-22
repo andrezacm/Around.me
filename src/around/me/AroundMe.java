@@ -151,9 +151,9 @@ public class AroundMe extends MapActivity {
 	            startActivity(intent_view);
 	        return true;
 	        
-			case R.id.addevent:
-				Intent intent_add = new Intent(this, AddEvent.class);
-	            startActivity(intent_add);
+			case R.id.register:
+				Intent intent_register = new Intent(this, Register.class);
+	            startActivity(intent_register);
 	        return true;
 
 			default:

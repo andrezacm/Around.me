@@ -6,5 +6,7 @@
     <string name="title_activity_around_me">AroundMe</string>
     <string name="title_activity_view_event">ViewEvent</string>
     <string name="title_activity_add_event">AddEvent</string>
+    <string name="title_activity_around_me_login">AroundMeLogin</string>
+    <string name="title_activity_register">Register</string>
 
 </resources>

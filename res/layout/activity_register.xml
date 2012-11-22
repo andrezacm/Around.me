@@ -1,0 +1,85 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/register_textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Registre-se! :)"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:id="@+id/register_textView_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nome" />
+
+        <EditText
+            android:id="@+id/register_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName" >
+
+            <requestFocus />
+        </EditText>
+
+        <TextView
+            android:id="@+id/register_textView_email"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="E-mail" />
+        
+        <EditText
+            android:id="@+id/register_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textEmailAddress" />
+
+        <TextView
+            android:id="@+id/register_textView_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Senha" />
+        
+        <EditText
+            android:id="@+id/register_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPassword" />
+
+        <TextView
+            android:id="@+id/register_textView_confirm_password"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Confirme a senha" />
+        
+        <EditText
+            android:id="@+id/register_confirm_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPassword" />
+
+        <Button
+            android:id="@+id/register_criar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Enviar" />
+
+    </LinearLayout>
+
+</RelativeLayout>

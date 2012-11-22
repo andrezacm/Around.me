@@ -17,8 +17,8 @@
         android:title="Satelite View"/>
 
     <item
-        android:id="@+id/addevent"
-        android:title="AddEvent"/>
+        android:id="@+id/register"
+        android:title="Registre-se"/>
 
     <item
         android:id="@+id/viewevent"
