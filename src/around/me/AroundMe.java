@@ -8,6 +8,7 @@ import java.util.concurrent.ExecutionException;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
@@ -24,12 +25,16 @@ import com.google.android.maps.OverlayItem;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
@@ -85,6 +90,7 @@ public class AroundMe extends MapActivity {
 
 		showMyFirstLocation();
 		showEvents();
+		//this.registerReceiver(receiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 	}
 
 	private void showMyFirstLocation(){
@@ -115,6 +121,34 @@ public class AroundMe extends MapActivity {
 	}
 
 	private ArrayList<Event> getNewEvents(){
+		
+		AsyncTask<Void, Void, Void> newEvent = new AsyncTask<Void, Void, Void>() {
+			@Override
+			protected Void doInBackground(Void... params) {
+				DefaultHttpClient client = new DefaultHttpClient();
+				HttpGet get = new HttpGet("http://sleepy-castle-9664.herokuapp.com/events");
+
+				get.setHeader("Accept", "application/json");
+				get.setHeader("Content-Type","application/json");
+
+				String response = null;
+				try {
+					ResponseHandler<String> responseHandler = new BasicResponseHandler();
+					response = client.execute(get, responseHandler);
+					Log.i("List Event", "Received "+ response +"!");
+				} catch (ClientProtocolException e) {
+					e.printStackTrace();
+					Log.e("ClientProtocol",""+e);
+				} catch (IOException e) {
+					e.printStackTrace();
+					Log.e("IO",""+e);
+				}
+				return null;
+			}
+		};
+
+		newEvent.execute();
+		
 		Event.create("Name Party 1", "Description Party1 Party1 Party1 Party1 Party1", new GeoPoint((int) (50.878 * 1E6), (int) (4.7 * 1E6)));
 		Event.create("Name Party 2", "Description Party2 Party2 Party2 Party2 Party2", new GeoPoint((int) (50.875 * 1E6), (int) (4.705 * 1E6)));
 		Event.create("Name Party 3", "Description Party3 Party3 Party3 Party3 Party3", new GeoPoint((int) (50.870 * 1E6), (int) (4.710 * 1E6)));
@@ -146,11 +180,11 @@ public class AroundMe extends MapActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item){
 		switch (item.getItemId()){
-		case R.id.mylocation:
+		/*case R.id.mylocation:
 			Toast.makeText(AroundMe.this, "Current location", Toast.LENGTH_SHORT).show();
 			//mylocationlist.gpsCurrentLocation();	
 			return true;
-
+		*/
 		case R.id.normalview:
 			Toast.makeText(AroundMe.this, "Normal Street View", Toast.LENGTH_SHORT).show();
 			if(mapview.isSatellite()==true){
@@ -247,7 +281,7 @@ public class AroundMe extends MapActivity {
 		return auth.execute().get();
 	}
 
-	private void sendToServer(String token){
+	private void sendToServer(){
 
 		AsyncTask<Event, Void, Void> newEvent = new AsyncTask<Event, Void, Void>() {
 			@Override
@@ -270,8 +304,8 @@ public class AroundMe extends MapActivity {
 					userObj.put("name", param[0].getName());
 					userObj.put("description", param[0].getDescription());
 					userObj.put("date", param[0].getDate());
-					userObj.put("coordenada x", param[0].getGeoPoint().getLatitudeE6());
-					userObj.put("coordenada y", param[0].getGeoPoint().getLongitudeE6());
+					userObj.put("x", param[0].getGeoPoint().getLatitudeE6());
+					userObj.put("y", param[0].getGeoPoint().getLongitudeE6());
 
 					holder.put("event", userObj);
 					Log.e("Event JSON", "Event JSON = "+ holder.toString());
@@ -325,6 +359,29 @@ public class AroundMe extends MapActivity {
 		return false;
 	}
 
+	private boolean isNetworkAvailable() {
+		ConnectivityManager cm = (ConnectivityManager) 
+				getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+		if (networkInfo != null && networkInfo.isConnected()) {
+			return true;
+		}
+		return false;
+	} 
+	
+	private BroadcastReceiver receiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			Log.d(BroadcastReceiver.class.getSimpleName(), "action: "
+					+ intent.getAction());
+			
+			if(isNetworkAvailable()){
+				sendToServer();
+			}
+
+		}
+	};
 
 	public class MyLocationListener implements LocationListener{
 

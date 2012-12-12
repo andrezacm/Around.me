@@ -63,7 +63,9 @@ public class Event {
 	}
 	
 	public static void create(String name, String description, GeoPoint geoPoint) {
-		events.add(new Event(name, description, geoPoint));
+		Event event = new Event(name, description, geoPoint);
+		events.add(event);
+		//event.insert();
 	}
 	
 	public static ArrayList<Event> getEvents() {
