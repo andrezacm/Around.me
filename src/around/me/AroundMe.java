@@ -170,8 +170,8 @@ public class AroundMe extends MapActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.layout.menu, menu);
-		menu.add(0, 98, 0, "Registre-se");
-		menu.add(0, 99, 0, "Login");
+		//menu.add(0, 98, 0, "Registre-se");
+		//menu.add(0, 99, 0, "Login");
 		return super.onCreateOptionsMenu(menu);
 	}
 

@@ -10,7 +10,7 @@
         android:id="@+id/normalview"
         android:icon="@drawable/normalview"
         android:title="Normal View"/>
-
+ 
     <item
         android:id="@+id/sateliteview"
         android:icon="@drawable/sateliteview"

@@ -48,6 +48,15 @@ public class AroundMeLogin extends Activity {
 				startActivity(intent_map);
 			}
 		});
+		
+		Button buttonRegister = (Button) findViewById(R.id.login_registrese);
+
+		buttonRegister.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				Intent intent_registrese = new Intent(v.getContext(), Register.class);
+				startActivity(intent_registrese);
+			}
+		});
     }
 
     @Override
