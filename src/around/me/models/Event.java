@@ -37,7 +37,7 @@ public class Event {
 
 	private Event(){};
 		
-	private Event(long id, String name, String description, String date, GeoPoint geoPoint){
+	private Event(long id, String name, String description, GeoPoint geoPoint, String date){
 		this.geoPoint = geoPoint;
 		this.name = name;
 		this.description = description;
@@ -45,7 +45,7 @@ public class Event {
 		this.id = id;
 	}
 	
-	private Event(String name, String description, String date, GeoPoint geoPoint){
+	private Event(String name, String description, GeoPoint geoPoint, String date){
 		this.geoPoint = geoPoint;
 		this.name = name;
 		this.description = description; 
@@ -63,8 +63,8 @@ public class Event {
 		this.description = description; 
 	}
 	
-	public static void create(String name, String description, GeoPoint geoPoint, final Context context) {
-		final Event event = new Event(name, description, geoPoint);
+	public static void create(String name, String description, GeoPoint geoPoint, String dateString, final Context context) {
+		final Event event = new Event(name, description, geoPoint, dateString);
 		events.add(event);
 		//event.insert();
 		

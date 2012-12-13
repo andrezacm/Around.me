@@ -1,5 +1,9 @@
 package around.me;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 import com.google.android.maps.GeoPoint;
 
 import android.os.Bundle;
@@ -9,6 +13,8 @@ import android.content.Intent;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CalendarView;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import around.me.models.Event;
@@ -32,8 +38,13 @@ public class AddEvent extends Activity {
 			public void onClick(View v) {
 				EditText name = (EditText) findViewById(R.id.add_event_name);
 				EditText description = (EditText) findViewById(R.id.add_event_description);
+				DatePicker date = (DatePicker) findViewById(R.id.add_event_date);
 				
-				Event.create(name.getText().toString(), description.getText().toString(), geoPoint, context);
+				GregorianCalendar d = new GregorianCalendar(date.getYear(), date.getMonth(), date.getDayOfMonth());
+//				SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+//				String dateString = sdf.format(d);
+				
+				Event.create(name.getText().toString(), description.getText().toString(), geoPoint, d.toString(), context);
 				
 				Intent intent_map = new Intent(v.getContext(), AroundMe.class);
 				intent_map.putExtra("geo_point_x", geoPoint.getLatitudeE6());

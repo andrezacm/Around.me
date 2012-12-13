@@ -6,10 +6,10 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
         android:orientation="vertical" >
 
         <EditText
@@ -31,12 +31,17 @@
             android:inputType="textMultiLine"
             android:lines="4" />
 
+        <DatePicker
+            android:id="@+id/add_event_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.16" />
+
         <Button
             android:id="@+id/add_event_criar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Criar" />
-
     </LinearLayout>
 
 </RelativeLayout>
