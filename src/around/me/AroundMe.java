@@ -13,6 +13,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicResponseHandler;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.tsccm.WaitingThread;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -29,16 +31,19 @@ import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.os.AsyncTask.Status;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.util.JsonReader;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -114,18 +119,34 @@ public class AroundMe extends MapActivity {
 		Drawable makerEvent = this.getResources().getDrawable(R.drawable.mylocation);
 
 		MyItemizedOverlay eventItemOverlay = new MyItemizedOverlay(makerEvent, getApplicationContext());
-		ArrayList<Event> events = getNewEvents();
+		ArrayList<Event> events = null;
+		try {
+			events = getNewEvents();
+		} catch (InterruptedException e) {
+			Log.e("Interruped get Events", ""+e);
+		} catch (ExecutionException e) {
+			Log.e("Execution error in get Events", ""+e);
+		}
 
-		for (Event event: events) {
-			GeoPoint pointEvent = new GeoPoint(event.getGeoPoint().getLatitudeE6(), event.getGeoPoint().getLongitudeE6());
-			OverlayItem item = new OverlayItem(pointEvent, event.getName(), event.getDescription());
-
-			eventItemOverlay.addOverlayItem(item);
-			mapview.getOverlays().add(eventItemOverlay);
+		Log.i("DEVIA MOSTRAR", "MOSTRA SAPOHA DESSE EVENTO!!");
+		
+		if (events == null){
+			Log.i("VAZIO", "SAPOHA ESTA VAZIA!!");
+		}
+		if (events != null){
+			for (Event event: events) {
+				GeoPoint pointEvent = new GeoPoint(event.getGeoPoint().getLatitudeE6(), event.getGeoPoint().getLongitudeE6());
+				OverlayItem item = new OverlayItem(pointEvent, event.getName(), event.getDescription());
+	
+				eventItemOverlay.addOverlayItem(item);
+				mapview.getOverlays().add(eventItemOverlay);
+				
+				Log.i("NAO ESTA VAZIO", "OPA TEM EVENTO SIM!!");
+			}
 		}
 	}
 
-	private ArrayList<Event> getNewEvents(){
+	private ArrayList<Event> getNewEvents() throws InterruptedException, ExecutionException{
 		
 		AsyncTask<Void, Void, Void> newEvent = new AsyncTask<Void, Void, Void>() {
 			@Override
@@ -137,9 +158,24 @@ public class AroundMe extends MapActivity {
 				get.setHeader("Content-Type","application/json");
 
 				String response = null;
+				ArrayList<Event> events = new ArrayList<Event>();
 				try {
 					ResponseHandler<String> responseHandler = new BasicResponseHandler();
 					response = client.execute(get, responseHandler);
+					
+					try {
+						JSONArray jArray = new JSONArray(response);
+						
+						for (int i = 0; i < jArray.length(); i++) {
+							JSONObject jObject = (JSONObject) jArray.get(i);
+							Event.createForLoad(jObject.getString("name"), jObject.getString("description"), 
+												new GeoPoint(jObject.getInt("x"), jObject.getInt("y")), 
+												jObject.getString("date"));
+						}
+					} catch (JSONException e) {
+						Log.e("JsonObject", ""+e);
+					}
+					
 					Log.i("List Event", "Received "+ response +"!");
 				} catch (ClientProtocolException e) {
 					e.printStackTrace();

@@ -63,6 +63,11 @@ public class Event {
 		this.description = description; 
 	}
 	
+	public static void createForLoad(String name, String description, GeoPoint geoPoint, String dateString) {
+		final Event event = new Event(name, description, geoPoint, dateString);
+		events.add(event);
+	}
+	
 	public static void create(String name, String description, GeoPoint geoPoint, String dateString, final Context context) {
 		final Event event = new Event(name, description, geoPoint, dateString);
 		events.add(event);
