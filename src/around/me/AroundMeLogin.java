@@ -12,9 +12,13 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.android.gcm.GCMRegistrar;
+
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -53,6 +57,7 @@ public class AroundMeLogin extends Activity {
     }
     
     private void authenticate(){
+    	final Context context = this;
     	AsyncTask<Void, Void, Void> auth = new AsyncTask<Void, Void, Void>() {
 			@Override
 			protected Void doInBackground(Void... params) {
@@ -102,12 +107,13 @@ public class AroundMeLogin extends Activity {
 	    	    try {
 	    	    	mAuthToken = parseToken(response);
 
-	    	    	SharedPreferences settings = getPreferences(Activity.MODE_PRIVATE);
+	    	    	SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
 	    	    	SharedPreferences.Editor editor = settings.edit();
 	    	    	editor.putString("token", mAuthToken);
 	    	    	editor.commit();
+	    	    	GCMRegistrar.register(context, GCMIntentService.SENDER_ID);
 	    		} catch (Exception e) {
-	    			e.printStackTrace();
+	    			Log.e("token", e.getMessage());
 	    		}
 				return null;
 			}
@@ -119,7 +125,7 @@ public class AroundMeLogin extends Activity {
 		jObject = new JSONObject(jsonResponse);
 		JSONObject sessionObject = jObject.getJSONObject("session");
 		String attributeError = sessionObject.getString("error");
-		Toast.makeText(this, attributeError, Toast.LENGTH_LONG).show();
+//		Toast.makeText(this, attributeError, Toast.LENGTH_LONG).show();
 		String attributeToken = sessionObject.getString("auth_token");
 		return attributeToken;
 	}

@@ -1,9 +1,13 @@
 package around.me;
 
+import com.google.android.gcm.GCMRegistrar;
+
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
@@ -19,6 +23,7 @@ public class Register extends Activity {
 
 		Button buttonCreate = (Button) findViewById(R.id.register_criar);
 
+		final Context context = this;
 		buttonCreate.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				EditText name = (EditText) findViewById(R.id.register_name);
@@ -35,6 +40,9 @@ public class Register extends Activity {
 				editor.putString("email", email.getText().toString());
 				editor.commit();
 				
+				final String regId = GCMRegistrar.getRegistrationId(context);
+				GCMRegistrar.register(context, GCMIntentService.SENDER_ID);
+								
 				Intent intent_map = new Intent(v.getContext(), AroundMe.class);
 				startActivity(intent_map);
 			}

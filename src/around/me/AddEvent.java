@@ -4,6 +4,7 @@ import com.google.android.maps.GeoPoint;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.view.Menu;
 import android.view.View;
@@ -26,12 +27,13 @@ public class AddEvent extends Activity {
         
         Button buttonCreate = (Button) findViewById(R.id.add_event_criar);
         
+        final Context context = this; 
         buttonCreate.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				EditText name = (EditText) findViewById(R.id.add_event_name);
 				EditText description = (EditText) findViewById(R.id.add_event_description);
 				
-				Event.create(name.getText().toString(), description.getText().toString(), geoPoint);
+				Event.create(name.getText().toString(), description.getText().toString(), geoPoint, context);
 				
 				Intent intent_map = new Intent(v.getContext(), AroundMe.class);
 				intent_map.putExtra("geo_point_x", geoPoint.getLatitudeE6());

@@ -17,6 +17,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import around.me.dao.DataBaseHelper;
 
@@ -62,10 +63,58 @@ public class Event {
 		this.description = description; 
 	}
 	
-	public static void create(String name, String description, GeoPoint geoPoint) {
-		Event event = new Event(name, description, geoPoint);
+	public static void create(String name, String description, GeoPoint geoPoint, final Context context) {
+		final Event event = new Event(name, description, geoPoint);
 		events.add(event);
 		//event.insert();
+		
+		AsyncTask<Void, Void, Void> insertEvent = new AsyncTask<Void, Void, Void>() {
+			@Override
+			protected Void doInBackground(Void... params) {
+				DefaultHttpClient client = new DefaultHttpClient();
+				
+				SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
+				String token = settings.getString("token", "");
+				HttpPost post = new HttpPost("http://sleepy-castle-9664.herokuapp.com/events?auth_token=" + token);
+
+				JSONObject holder = new JSONObject();
+				JSONObject eventObj = new JSONObject();
+
+				try {
+					eventObj.put("name", event.name);
+					eventObj.put("description", event.description);
+					eventObj.put("date", event.date);
+					eventObj.put("x", event.geoPoint.getLatitudeE6());
+					eventObj.put("y", event.geoPoint.getLongitudeE6());
+					holder.put("event", eventObj);
+					Log.e("Creating Event", "Creating Event = "+ holder.toString());
+					StringEntity se = new StringEntity(holder.toString());
+					post.setEntity(se);
+					post.setHeader("Accept", "application/json");
+					post.setHeader("Content-Type","application/json");
+				} catch (UnsupportedEncodingException e) {
+					Log.e("Error",""+e);
+					e.printStackTrace();
+				} catch (JSONException js) {
+					js.printStackTrace();
+				}
+
+				String response = null;
+				try {
+					ResponseHandler<String> responseHandler = new BasicResponseHandler();
+					response = client.execute(post, responseHandler);
+					Log.i("Creating Event", "Received "+ response +"!");
+				} catch (ClientProtocolException e) {
+					e.printStackTrace();
+					Log.e("Creating Event - ClientProtocol",""+e);
+				} catch (IOException e) {
+					e.printStackTrace();
+					Log.e("Creating Event - IO",""+e);
+				}
+				return null;
+			}
+		};
+		insertEvent.execute();
 	}
 	
 	public static ArrayList<Event> getEvents() {

@@ -16,6 +16,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.android.gcm.GCMRegistrar;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapController;
@@ -29,6 +30,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -65,7 +67,10 @@ public class AroundMe extends MapActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_around_me);
-
+		
+		GCMRegistrar.checkDevice(this);
+		GCMRegistrar.checkManifest(this);
+		
 		mapview = (MyMapView) findViewById(R.id.mapview);
 
 		mapcontroller = mapview.getController();
@@ -149,9 +154,9 @@ public class AroundMe extends MapActivity {
 
 		newEvent.execute();
 		
-		Event.create("Name Party 1", "Description Party1 Party1 Party1 Party1 Party1", new GeoPoint((int) (50.878 * 1E6), (int) (4.7 * 1E6)));
-		Event.create("Name Party 2", "Description Party2 Party2 Party2 Party2 Party2", new GeoPoint((int) (50.875 * 1E6), (int) (4.705 * 1E6)));
-		Event.create("Name Party 3", "Description Party3 Party3 Party3 Party3 Party3", new GeoPoint((int) (50.870 * 1E6), (int) (4.710 * 1E6)));
+//		Event.create("Name Party 1", "Description Party1 Party1 Party1 Party1 Party1", new GeoPoint((int) (50.878 * 1E6), (int) (4.7 * 1E6)));
+//		Event.create("Name Party 2", "Description Party2 Party2 Party2 Party2 Party2", new GeoPoint((int) (50.875 * 1E6), (int) (4.705 * 1E6)));
+//		Event.create("Name Party 3", "Description Party3 Party3 Party3 Party3 Party3", new GeoPoint((int) (50.870 * 1E6), (int) (4.710 * 1E6)));
 		return Event.getEvents();
 	}
 
@@ -282,7 +287,7 @@ public class AroundMe extends MapActivity {
 	}
 
 	private void sendToServer(){
-
+		final Context context = this;
 		AsyncTask<Event, Void, Void> newEvent = new AsyncTask<Event, Void, Void>() {
 			@Override
 			protected Void doInBackground(Event... params) {
@@ -291,7 +296,7 @@ public class AroundMe extends MapActivity {
 				Log.e("New Event JSON", "DESCRIPTION = "+ param[0].getDescription());
 				Log.e("New Event JSON", "DATE = "+ param[0].getDate());
 
-				SharedPreferences settings = getPreferences(Activity.MODE_PRIVATE);
+				SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(context);
 				String token = settings.getString("token", "");
 
 				DefaultHttpClient client = new DefaultHttpClient();
